@@ -21,3 +21,23 @@ button {
 .btn:hover {
   background-color: #00ffff;
 }
+
+.custom-numbers {
+  max-width: 400px;
+  margin: 20px auto;
+  display: flex;
+}
+
+.custom-numbers .min,
+.custom-numbers .sec{
+  display: block;
+  /* flex: 0 1 25%; */
+  width: 100px;
+  margin-right: 10px;
+}
+
+.btn.custom {
+  width: 150px;
+  margin: 0 0 0 auto;
+  height: auto;
+}
