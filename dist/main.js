@@ -1,15 +1,29 @@
 let pomodoro = {
+  isRunning: false,
   time: 0,
   initTimeMs: 0,
   initTimer() {
+    let self = this;
     this.secondsDom = document.querySelector('#countdown .seconds');
     this.minutesDom = document.querySelector('#countdown .minutes');
     this.time = this.initTimeMs = this.convTimeToMs(this.secondsDom, this.minutesDom);
     console.log(this);
-    document.querySelector('.btn-timer').addEventListener('click', this.startTimer);
-    document.querySelector('.stop-music').addEventListener('click', this.pauseTimer);
-    document.querySelector('.btn.reset').addEventListener('click', this.resetTimer);
-    document.querySelector('.btn.custom').addEventListener('click', this.applyCustomTime);
+    // document.querySelector('.btn-timer').addEventListener('click', this.startTimer);
+    document.querySelector('.btn-timer').addEventListener('click', function () {
+      self.startTimer.apply(self);
+    });
+    // document.querySelector('.stop-music').addEventListener('click', this.pauseTimer);
+    document.querySelector('.stop-music').addEventListener('click', function () {
+      self.pauseTimer.apply(self);
+    });
+    // document.querySelector('.btn.reset').addEventListener('click', this.resetTimer);
+    document.querySelector('.btn.reset').addEventListener('click', function () {
+      self.resetTimer.apply(self);
+    });
+    // document.querySelector('.btn.custom').addEventListener('click', this.applyCustomTime);
+    document.querySelector('.btn.custom').addEventListener('click', function () {
+      self.applyCustomTime.apply(self);
+    });
   },
   convTimeToMs(seconds, minutes) {
     let secInMs, minInMs, timeInMs;
@@ -29,45 +43,55 @@ let pomodoro = {
     return normTime;
   },
   startTimer() {
-    pomodoro.interval = setInterval(function() {
-      pomodoro.countdown();
+    if (this.isRunning) {
+      return
+    }
+    this.isRunning = true;
+    let self = this;
+    this.interval = setInterval(function () {
+      self.countdown();
     }, 1000);
   },
   pauseTimer() {
-    clearInterval(pomodoro.interval);
+    clearInterval(this.interval);
     console.log('pause timer');
   },
   resetTimer() {
-    clearInterval(pomodoro.interval);
-    pomodoro.updateDOM(pomodoro.time);
-    pomodoro.initTimeMs = pomodoro.time;
-    if(sessionStorage.getItem('time')) {
+    this.isRunning = false;
+    console.log(this);
+    clearInterval(this.interval);
+    this.updateDOM(pomodoro.time);
+    this.initTimeMs = this.time;
+    if (sessionStorage.getItem('time')) {
       sessionStorage.removeItem('time');
-      console.log(sessionStorage.length);
+      // console.log(sessionStorage.length);
     }
   },
   countdown() {
     console.log('timer 1st action');
-    
+    // console.log(this);
+
     if (this.initTimeMs > 0) {
       this.initTimeMs = this.initTimeMs - 1000;
       sessionStorage.setItem('time', this.initTimeMs);
       this.updateDOM(this.initTimeMs);
     }
-    if(this.initTimeMs === 0) {
+    if (this.initTimeMs === 0) {
       sessionStorage.removeItem('time');
       clearInterval(this.interval);
+      this.isRunning = false;
     }
-    
-    console.log(this);
+
+    // console.log(this);
     console.log('timer last action');
   },
   updateDOM(time) {
-    console.log(time);
+    // console.log(time);
     let normTime = this.convMsToNormTime(time);
-    console.log(normTime);
-    this.secondsDom.innerHTML = pomodoro.toDoubleDigit(normTime.seconds);
-    this.minutesDom.innerHTML = pomodoro.toDoubleDigit(normTime.minutes);
+    // console.log(normTime);
+    this.secondsDom.innerHTML = this.toDoubleDigit(normTime.seconds);
+    this.minutesDom.innerHTML = this.toDoubleDigit(normTime.minutes);
+    console.log(this);
   },
   toDoubleDigit(num) {
     if (num < 10) {
@@ -79,17 +103,16 @@ let pomodoro = {
     let minutes = document.querySelector('.custom-numbers .min').value * 60000;
     let seconds = document.querySelector('.custom-numbers .sec').value * 1000;
     console.log(minutes, seconds);
-    pomodoro.initTimeMs = minutes + seconds
+    this.initTimeMs = minutes + seconds
     console.log(pomodoro.initTimeMs);
-    pomodoro.updateDOM(pomodoro.initTimeMs);
+    this.updateDOM(this.initTimeMs);
   },
-
 };
 
 window.onload = function () {
   pomodoro.initTimer();
   if (sessionStorage.getItem('time')) {
-    console.log(sessionStorage.getItem('time'));
+    // console.log(sessionStorage.getItem('time'));
     pomodoro.initTimeMs = sessionStorage.getItem('time');
     pomodoro.updateDOM(pomodoro.initTimeMs);
   }
