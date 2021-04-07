@@ -1,12 +1,12 @@
 let pomodoro = {
   isRunning: false,
-  time: 0,
-  initTimeMs: 0,
+  timeMS: 0,
   initTimer() {
     let self = this;
     this.secondsDom = document.querySelector('#countdown .seconds');
     this.minutesDom = document.querySelector('#countdown .minutes');
-    this.time = this.initTimeMs = this.convTimeToMs(this.secondsDom, this.minutesDom);
+    this.timeMS = this.convTimeToMs(this.secondsDom, this.minutesDom);
+    sessionStorage.setItem('initTime', this.timeMS);
     console.log(this);
     // document.querySelector('.btn-timer').addEventListener('click', this.startTimer);
     document.querySelector('.btn-timer').addEventListener('click', function () {
@@ -54,14 +54,15 @@ let pomodoro = {
   },
   pauseTimer() {
     clearInterval(this.interval);
+    this.isRunning = false;
     console.log('pause timer');
   },
   resetTimer() {
     this.isRunning = false;
     console.log(this);
     clearInterval(this.interval);
-    this.updateDOM(pomodoro.time);
-    this.initTimeMs = this.time;
+    this.updateDOM(sessionStorage.getItem('initTime'));
+    this.timeMS = sessionStorage.getItem('initTime');
     if (sessionStorage.getItem('time')) {
       sessionStorage.removeItem('time');
       // console.log(sessionStorage.length);
@@ -71,12 +72,12 @@ let pomodoro = {
     console.log('timer 1st action');
     // console.log(this);
 
-    if (this.initTimeMs > 0) {
-      this.initTimeMs = this.initTimeMs - 1000;
-      sessionStorage.setItem('time', this.initTimeMs);
-      this.updateDOM(this.initTimeMs);
+    if (this.timeMS > 0) {
+      this.timeMS = this.timeMS - 1000;
+      sessionStorage.setItem('time', this.timeMS);
+      this.updateDOM(this.timeMS);
     }
-    if (this.initTimeMs === 0) {
+    if (this.timeMS === 0) {
       sessionStorage.removeItem('time');
       clearInterval(this.interval);
       this.isRunning = false;
@@ -95,7 +96,7 @@ let pomodoro = {
   },
   toDoubleDigit(num) {
     if (num < 10) {
-      return "0" + parseInt(num, 10);
+      return "0" + num;
     }
     return num;
   },
@@ -103,9 +104,11 @@ let pomodoro = {
     let minutes = document.querySelector('.custom-numbers .min').value * 60000;
     let seconds = document.querySelector('.custom-numbers .sec').value * 1000;
     console.log(minutes, seconds);
-    this.initTimeMs = minutes + seconds
-    console.log(pomodoro.initTimeMs);
-    this.updateDOM(this.initTimeMs);
+    if (minutes >= 0 && seconds >= 0) {
+      this.timeMS = minutes + seconds
+      console.log(pomodoro.timeMS);
+      this.updateDOM(this.timeMS);
+    }
   },
 };
 
@@ -113,7 +116,7 @@ window.onload = function () {
   pomodoro.initTimer();
   if (sessionStorage.getItem('time')) {
     // console.log(sessionStorage.getItem('time'));
-    pomodoro.initTimeMs = sessionStorage.getItem('time');
-    pomodoro.updateDOM(pomodoro.initTimeMs);
+    pomodoro.timeMS = sessionStorage.getItem('time');
+    pomodoro.updateDOM(pomodoro.timeMS);
   }
 };
