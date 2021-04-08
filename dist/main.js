@@ -7,20 +7,15 @@ let pomodoro = {
     this.minutesDom = document.querySelector('#countdown .minutes');
     this.timeMS = this.convTimeToMs(this.secondsDom, this.minutesDom);
     sessionStorage.setItem('initTime', this.timeMS);
-    console.log(this);
-    // document.querySelector('.btn-timer').addEventListener('click', this.startTimer);
     document.querySelector('.btn-timer').addEventListener('click', function () {
       self.startTimer.apply(self);
     });
-    // document.querySelector('.stop-music').addEventListener('click', this.pauseTimer);
     document.querySelector('.stop-music').addEventListener('click', function () {
       self.pauseTimer.apply(self);
     });
-    // document.querySelector('.btn.reset').addEventListener('click', this.resetTimer);
     document.querySelector('.btn.reset').addEventListener('click', function () {
       self.resetTimer.apply(self);
     });
-    // document.querySelector('.btn.custom').addEventListener('click', this.applyCustomTime);
     document.querySelector('.btn.custom').addEventListener('click', function () {
       self.applyCustomTime.apply(self);
     });
@@ -55,23 +50,17 @@ let pomodoro = {
   pauseTimer() {
     clearInterval(this.interval);
     this.isRunning = false;
-    console.log('pause timer');
   },
   resetTimer() {
     this.isRunning = false;
-    console.log(this);
     clearInterval(this.interval);
     this.updateDOM(sessionStorage.getItem('initTime'));
     this.timeMS = sessionStorage.getItem('initTime');
     if (sessionStorage.getItem('time')) {
       sessionStorage.removeItem('time');
-      // console.log(sessionStorage.length);
     }
   },
   countdown() {
-    console.log('timer 1st action');
-    // console.log(this);
-
     if (this.timeMS > 0) {
       this.timeMS = this.timeMS - 1000;
       sessionStorage.setItem('time', this.timeMS);
@@ -82,17 +71,11 @@ let pomodoro = {
       clearInterval(this.interval);
       this.isRunning = false;
     }
-
-    // console.log(this);
-    console.log('timer last action');
   },
   updateDOM(time) {
-    // console.log(time);
     let normTime = this.convMsToNormTime(time);
-    // console.log(normTime);
     this.secondsDom.innerHTML = this.toDoubleDigit(normTime.seconds);
     this.minutesDom.innerHTML = this.toDoubleDigit(normTime.minutes);
-    console.log(this);
   },
   toDoubleDigit(num) {
     if (num < 10) {
@@ -103,19 +86,14 @@ let pomodoro = {
   applyCustomTime() {
     let minutes = Math.abs(document.querySelector('.custom-numbers .min').value * 60000);
     let seconds = Math.abs(document.querySelector('.custom-numbers .sec').value * 1000);
-    console.log(minutes, seconds);
-    // if (minutes >= 0 && seconds >= 0) {
-      this.timeMS = minutes + seconds
-      console.log(pomodoro.timeMS);
-      this.updateDOM(this.timeMS);
-    // }
+    this.timeMS = minutes + seconds
+    this.updateDOM(this.timeMS);
   },
 };
 
 window.onload = function () {
   pomodoro.initTimer();
   if (sessionStorage.getItem('time')) {
-    // console.log(sessionStorage.getItem('time'));
     pomodoro.timeMS = sessionStorage.getItem('time');
     pomodoro.updateDOM(pomodoro.timeMS);
   }
