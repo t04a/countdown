@@ -101,14 +101,14 @@ let pomodoro = {
     return num;
   },
   applyCustomTime() {
-    let minutes = document.querySelector('.custom-numbers .min').value * 60000;
-    let seconds = document.querySelector('.custom-numbers .sec').value * 1000;
+    let minutes = Math.abs(document.querySelector('.custom-numbers .min').value * 60000);
+    let seconds = Math.abs(document.querySelector('.custom-numbers .sec').value * 1000);
     console.log(minutes, seconds);
-    if (minutes >= 0 && seconds >= 0) {
+    // if (minutes >= 0 && seconds >= 0) {
       this.timeMS = minutes + seconds
       console.log(pomodoro.timeMS);
       this.updateDOM(this.timeMS);
-    }
+    // }
   },
 };
 
