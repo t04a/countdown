@@ -1,10 +1,13 @@
 let pomodoro = {
   isRunning: false,
   timeMS: 0,
+  fillerWidth: 0,
+  fillerIncrement: 0,
   initTimer() {
     let self = this;
-    this.secondsDom = document.querySelector('#countdown .seconds');
-    this.minutesDom = document.querySelector('#countdown .minutes');
+    this.secondsDom = document.querySelector('.countdown .seconds');
+    this.minutesDom = document.querySelector('.countdown .minutes');
+    this.fillerDom = document.querySelector('.countdown-filler');
     this.timeMS = this.convTimeToMs(this.secondsDom, this.minutesDom);
     sessionStorage.setItem('initTime', this.timeMS);
     document.querySelector('.btn-timer').addEventListener('click', function () {
@@ -19,6 +22,7 @@ let pomodoro = {
     document.querySelector('.btn.custom').addEventListener('click', function () {
       self.applyCustomTime.apply(self);
     });
+    // console.log(this.fillerWidth);
   },
   convTimeToMs(seconds, minutes) {
     let secInMs, minInMs, timeInMs;
@@ -43,6 +47,7 @@ let pomodoro = {
     }
     this.isRunning = true;
     let self = this;
+    this.fillerIncrement = 400 / (sessionStorage.getItem('initTime') ? sessionStorage.getItem('initTime') / 1000 : this.timeMS / 1000);
     this.interval = setInterval(function () {
       self.countdown();
     }, 1000);
@@ -54,10 +59,16 @@ let pomodoro = {
   resetTimer() {
     this.isRunning = false;
     clearInterval(this.interval);
+    this.fillerWidth = 0;
+    this.fillerIncrement = 0;
     this.updateDOM(sessionStorage.getItem('initTime'));
     this.timeMS = sessionStorage.getItem('initTime');
     if (sessionStorage.getItem('time')) {
       sessionStorage.removeItem('time');
+      if(sessionStorage.getItem('fillerWidth')) {
+        sessionStorage.removeItem('fillerWidth');
+        // console.log('session filler delete');
+      }
     }
   },
   countdown() {
@@ -65,9 +76,14 @@ let pomodoro = {
       this.timeMS = this.timeMS - 1000;
       sessionStorage.setItem('time', this.timeMS);
       this.updateDOM(this.timeMS);
+      sessionStorage.setItem('fillerWidth', this.fillerWidth);
+      // console.log(this.fillerWidth, this.fillerIncrement);
+      // console.log('session filler write');
     }
     if (this.timeMS === 0) {
       sessionStorage.removeItem('time');
+      sessionStorage.removeItem('fillerWidth');
+      // console.log('session filler delete');
       clearInterval(this.interval);
       this.isRunning = false;
     }
@@ -76,6 +92,8 @@ let pomodoro = {
     let normTime = this.convMsToNormTime(time);
     this.secondsDom.innerHTML = this.toDoubleDigit(normTime.seconds);
     this.minutesDom.innerHTML = this.toDoubleDigit(normTime.minutes);
+    this.fillerWidth = this.fillerWidth + this.fillerIncrement;
+    this.fillerDom.style.width = this.fillerWidth + 'px';
   },
   toDoubleDigit(num) {
     if (num < 10) {
@@ -87,14 +105,24 @@ let pomodoro = {
     let minutes = Math.abs(document.querySelector('.custom-numbers .min').value * 60000);
     let seconds = Math.abs(document.querySelector('.custom-numbers .sec').value * 1000);
     this.timeMS = minutes + seconds
+    this.fillerWidth = 0;
+    this.fillerIncrement = 0;
+    sessionStorage.setItem('initTime', this.timeMS);
+    // console.log(this.fillerWidth, this.fillerIncrement);
     this.updateDOM(this.timeMS);
   },
+  /* filler() {
+
+  }, */
 };
 
 window.onload = function () {
   pomodoro.initTimer();
   if (sessionStorage.getItem('time')) {
     pomodoro.timeMS = sessionStorage.getItem('time');
+    if(sessionStorage.getItem('fillerWidth')) {
+      pomodoro.fillerWidth = +sessionStorage.getItem('fillerWidth');
+    }
     pomodoro.updateDOM(pomodoro.timeMS);
   }
 };

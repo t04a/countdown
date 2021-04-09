@@ -2,6 +2,30 @@ body {
   text-align: center;
 }
 
+.countdown {
+  width: 400px;
+  margin: 0 auto 10px;
+  padding: 20px 0;
+  position: relative;
+}
+
+.countdown-filler {
+  position: absolute;
+  height: 100%;
+  width: 0;
+  background-color: lightgreen;
+  top: 0;
+  overflow: hidden;
+  z-index: 0;
+  border-radius: 4px;
+}
+
+.countdown h1 {
+  position: relative;
+  margin: 0;
+  z-index: 1;
+}
+
 button {
   display: block;
 }
