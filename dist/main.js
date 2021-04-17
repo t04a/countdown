@@ -8,7 +8,7 @@ let pomodoro = {
     this.secondsDom = document.querySelector('.countdown .seconds');
     this.minutesDom = document.querySelector('.countdown .minutes');
     this.fillerDom = document.querySelector('.countdown-filler');
-    this.timeMS = this.convTimeToMs(this.secondsDom, this.minutesDom);
+    this.timeMS = this.convTimeToMs(this.secondsDom.innerHTML, this.minutesDom.innerHTML);
     sessionStorage.setItem('initTime', this.timeMS);
     document.querySelector('.btn-timer').addEventListener('click', function () {
       self.startTimer.apply(self);
@@ -24,22 +24,16 @@ let pomodoro = {
     });
     // console.log(this.fillerWidth);
   },
-  convTimeToMs(seconds, minutes) {
-    let secInMs, minInMs, timeInMs;
-    secInMs = seconds.innerHTML * 1000;
-    minInMs = minutes.innerHTML * 60000;
-    return timeInMs = secInMs + minInMs;
+  convTimeToMs(sec, min) {
+    return (sec * 1000 + min * 60000);
   },
   convMsToNormTime(timeMs) {
-    let minutes, seconds, normTime;
-    minutes = parseInt(timeMs / 60000);
-    seconds = (timeMs % 60000) / 1000;
-    normTime = {
+    let minutes = parseInt(timeMs / 60000);
+    let seconds = (timeMs % 60000) / 1000;
+    return {
       minutes: minutes,
       seconds: seconds,
     }
-
-    return normTime;
   },
   startTimer() {
     if (this.isRunning) {
@@ -111,9 +105,6 @@ let pomodoro = {
     // console.log(this.fillerWidth, this.fillerIncrement);
     this.updateDOM(this.timeMS);
   },
-  /* filler() {
-
-  }, */
 };
 
 window.onload = function () {
